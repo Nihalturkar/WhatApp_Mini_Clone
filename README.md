@@ -25,3 +25,6 @@ MiniWhatsapp is a real-time messaging application developed using Node.js, Expre
 
    ```bash
 git clone https://github.com/Nihalturkar/WhatApp_Mini_Clone.git
+
+2. LIVE DEMO
+   http://localhost:3000/
