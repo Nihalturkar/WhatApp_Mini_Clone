@@ -8,8 +8,14 @@ const expressSession = require('express-session');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const passport = require('passport');
+const mongoose = require('mongoose');
 
 var app = express();
+
+mongoose.connect('mongodb+srv://nihalturkar533:chatapp@chatapp.uokfnw4.mongodb.net/', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

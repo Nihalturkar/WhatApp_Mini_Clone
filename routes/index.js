@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const userModel = require('./users')
-const groupModel = require('./group')
-const messageModel = require('./message')
+const userModel = require('./users.js')
+const groupModel = require('./group.js')
+const messageModel = require('./message.js')
 
 const localStrategy = require('passport-local');
 const passport = require('passport');
@@ -13,18 +13,34 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/register', function(req, res, next) {
-  const userData = new userModel({
-    username:req.body.username,
-    email:req.body.email
-  })
-  userModel.register(userData,req.body.password)
-  .then(function(registeredUser){
-    passport.authenticate('local')(req,res,function(){
-      res.redirect('/home')
+router.post('/register', async function(req, res, next) {
+  try {
+    // Check if the username already exists
+    const existingUser = await userModel.findOne({ username: req.body.username });
+    if (existingUser) {
+      // Username already exists, send alert to the client
+      res.status(400).send({ message: 'Username already exists. Please choose a different one.' });
+      return; // Exit the function
+    }
+
+    // Username is available, proceed with registration
+    const userData = new userModel({
+      username: req.body.username,
+      email: req.body.email
     });
-  })
-})
+    await userModel.register(userData, req.body.password);
+
+    // Authentication after registration
+    passport.authenticate('local')(req, res, function() {
+      res.redirect('/home');
+    });
+  } catch (err) {
+    // Handle any other errors
+    console.error(err);
+    res.status(500).send({ message: 'An error occurred. Please try again later.' });
+  }
+});
+
 
 router.get('/login', function(req, res, next) {
   res.render('login', { title: 'Express' });
